@@ -4,36 +4,20 @@ import Throttle from '@/components/Throttle';
 import Gear from '@/components/Gear';
 import Slider from '@/components/Slider';
 import Buttons from '@/components/Buttons';
+import TrainGear from '@/components/TrainGear';
+import { deviceTracker } from '@/utils/deviceTracker';
+import { gameTracker } from '@/utils/gameTracker';
 
 function App() {
   const [gamepadID, setgamepadId] = useState(null);
   const [throttleAxis, setThrottleAxis] = useState(0);
   const [sliderAxis, setSliderAxis] = useState(0);
   const [buttons, setButtons] = useState([]);
+  const [trainGear, setTrainGear] = useState(0);
 
   useEffect(() => {
-    window.addEventListener('gamepadconnected', (device) => {
-      setgamepadId(device.gamepad.id);
-    });
-
-    window.electronAPI.pixelColor((event, data) => {
-      document.getElementById('palette').style.background = `#${data}`;
-    });
-
-    setInterval(() => {
-      setThrottleAxis(Math.round(navigator.getGamepads()[0].axes[2] * -50 + 50));
-      setSliderAxis(Math.round(navigator.getGamepads()[0].axes[6] * 100));
-      setButtons([
-        { button: 'B5', state: navigator.getGamepads()[0].buttons[4].value },
-        { button: 'B6', state: navigator.getGamepads()[0].buttons[5].value },
-        { button: 'B7', state: navigator.getGamepads()[0].buttons[6].value },
-        { button: 'B8', state: navigator.getGamepads()[0].buttons[7].value },
-        { button: 'R2', state: navigator.getGamepads()[0].buttons[8].value },
-        { button: 'L2', state: navigator.getGamepads()[0].buttons[9].value },
-        { button: 'SE', state: navigator.getGamepads()[0].buttons[10].value },
-        { button: 'ST', state: navigator.getGamepads()[0].buttons[11].value },
-      ]);
-    }, 1000 / 100);
+    deviceTracker(setgamepadId, setThrottleAxis, setSliderAxis, setButtons);
+    gameTracker(setTrainGear);
   }, []);
 
   return (
@@ -48,6 +32,9 @@ function App() {
           <Gear axis={throttleAxis} />
           <Buttons buttons={buttons} />
         </div>
+      </div>
+      <div className="bg-white bg-opacity-10 rounded-md px-3 py-3 w-full">
+        <TrainGear trainGear={trainGear} />
       </div>
     </div>
   );
