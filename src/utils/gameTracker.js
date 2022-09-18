@@ -1,8 +1,8 @@
 export const gameTracker = (setTrainGear) => {
-  window.electronAPI.gearNumber((event, data) => {
+  window.electron.gearNumberListener((event, data) => {
     setTrainGear(data);
   });
   setInterval(() => {
-    window.electronAPI.getGearNumber();
+    window.electron.gearNumberRequest();
   }, 1000 / 10);
 };
